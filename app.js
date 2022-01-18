@@ -3,6 +3,8 @@ require('dotenv').config({ path: './config.env' });
 
 const { connectDB } = require('./db/connect');
 const taskRoutes = require('./routes/taskRoutes');
+const notFound = require('./middleware/not-found');
+const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
 
@@ -12,6 +14,8 @@ app.use(express.json());
 
 // Routes
 app.use('/api/v1/tasks', taskRoutes);
+app.use('*', notFound);
+app.use(errorHandler);
 
 const port = 5000;
 
