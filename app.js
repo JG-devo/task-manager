@@ -7,13 +7,10 @@ const taskRoutes = require('./routes/taskRoutes');
 const app = express();
 
 // Middleware
+app.use(express.static('./public'));
 app.use(express.json());
 
 // Routes
-app.get('/', (req, res) => {
-  res.status(200).send('Home Page');
-});
-
 app.use('/api/v1/tasks', taskRoutes);
 
 const port = 5000;

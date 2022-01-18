@@ -1,19 +1,81 @@
-exports.getAllTasks = (req, res) => {
-  res.send('get all items');
+const Task = require('../models/taskModel');
+
+exports.getAllTasks = async (req, res) => {
+  try {
+    const tasks = await Task.find();
+    res.status(200).json({ tasks });
+  } catch (error) {
+    res.status(401).json({
+      success: false,
+      msg: error.message,
+    });
+  }
 };
 
-exports.createTask = (req, res) => {
-  res.json(req.body);
+exports.createTask = async (req, res) => {
+  try {
+    const task = await Task.create(req.body);
+    res.status(201).json({ task });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      msg: error.message,
+    });
+  }
 };
 
-exports.getOneTask = (req, res) => {
-  res.json({ id: req.params.id });
+exports.getOneTask = async (req, res) => {
+  try {
+    const task = await Task.findOne({ _id: req.params.id });
+    if (!task)
+      return res.status(404).json({
+        success: false,
+        msg: `Cannot find task with the ID: ${req.params.id}`,
+      });
+    res.status(200).json({ task });
+  } catch (error) {
+    res.status(401).json({
+      success: false,
+      msg: error.message,
+    });
+  }
 };
 
-exports.updateTask = (req, res) => {
-  res.send('update items');
+exports.deleteTask = async (req, res) => {
+  try {
+    const { id: taskID } = req.params;
+    const task = await Task.findOneAndDelete({ _id: taskID });
+    if (!task)
+      res.status(404).json({
+        success: false,
+        msg: `Cannot find task with the ID: ${req.params.id}`,
+      });
+    res.status(200).json({ success: true });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      msg: error.message,
+    });
+  }
 };
 
-exports.deleteTask = (req, res) => {
-  res.send('delete items');
+exports.updateTask = async (req, res) => {
+  try {
+    const { id: taskID } = req.params;
+    const task = await Task.findOneAndUpdate({ _id: taskID }, req.body, {
+      new: true, //always return the updated document
+      runValidators: true,
+    });
+    if (!task)
+      res.status(404).json({
+        success: false,
+        msg: `Cannot find task with the ID: ${req.params.id}`,
+      });
+    res.status(200).json({ task });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      msg: error.message,
+    });
+  }
 };
