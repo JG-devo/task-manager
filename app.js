@@ -8,7 +8,7 @@ const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
 
-// Middleware
+// Middleware.
 app.use(express.static('./public'));
 app.use(express.json());
 
